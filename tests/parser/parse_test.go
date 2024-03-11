@@ -16,15 +16,47 @@ func TestParser(t *testing.T) {
 		{
 			pattern: "a",
 			tokens: []token.Token{
-				{Type: token.LITERAL, Value: 'a'},
+				{Type: token.LITERAL, Value: byte('a')},
 			},
 		},
+
 		{
 			pattern: "(abc)",
 			tokens: []token.Token{
-				{Type: token.LITERAL, Value: 'a'},
-				{Type: token.LITERAL, Value: 'b'},
-				{Type: token.LITERAL, Value: 'c'},
+				{Type: token.LITERAL, Value: byte('a')},
+				{Type: token.LITERAL, Value: byte('b')},
+				{Type: token.LITERAL, Value: byte('c')},
+			},
+		},
+
+		{
+			pattern: "[abc]",
+			tokens: []token.Token{
+				{Type: token.BRACKET, Value: map[byte]bool{
+					byte('a'): true,
+					byte('b'): true,
+					byte('c'): true,
+				}},
+			},
+		},
+		{
+			pattern: "[a-c]",
+			tokens: []token.Token{
+				{Type: token.BRACKET, Value: map[byte]bool{
+					byte('a'): true,
+					byte('b'): true,
+					byte('c'): true,
+				}},
+			},
+		},
+		{
+			pattern: "[ab-c]",
+			tokens: []token.Token{
+				{Type: token.BRACKET, Value: map[byte]bool{
+					byte('a'): true,
+					byte('b'): true,
+					byte('c'): true,
+				}},
 			},
 		},
 	}
