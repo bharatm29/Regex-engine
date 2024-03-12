@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"regex-engine/internals/token"
+	"strconv"
+	"strings"
 )
 
 type ParseContext struct {
@@ -50,7 +52,9 @@ func parsePattern(pattern string, context *ParseContext) {
 	case '|': //[a-e]
 		parseOr(pattern, context)
 	case '{': // {3, } {3, 4} {,10}
+		parseRepeat(pattern, context)
 	case '*', '?', '+': // a*, a?, a+
+		parseRepeat(pattern, context)
 	default:
 		// literal
 		context.tokens = append(context.tokens, token.Token{
@@ -137,4 +141,68 @@ func parseOr(pattern string, context *ParseContext) {
 	context.pos = rightContext.pos
 
 	context.tokens = []token.Token{left, right}
+}
+
+type RepeatValue struct {
+	RepeatToken token.Token
+
+	Min int
+	Max int
+}
+
+const INFINITY = -1
+
+func parseRepeatBracket(pattern string, context *ParseContext) {
+	context.pos++ // skip {
+	pos := context.pos
+
+	for context.pos < len(pattern) && pattern[context.pos] != '}' {
+		context.pos++
+	}
+
+	expr := pattern[pos:context.pos]
+
+	split := strings.Split(expr, ",")
+
+	rep := RepeatValue{}
+
+	// TODO: What to do if both are empty? {,}
+
+	if split[0] == "" {
+		rep.Min = 0
+	} else {
+		val, err := strconv.Atoi(split[0])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Could not convert %s to int", split[0])
+		}
+
+		rep.Min = val
+	}
+
+	if split[len(split)-1] == "" {
+		rep.Max = INFINITY
+	} else {
+		val, err := strconv.Atoi(split[len(split)-1])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Could not convert %s to int", split[len(split)-1])
+		}
+
+		rep.Max = val
+	}
+
+	rep.RepeatToken = context.tokens[len(context.tokens)-1]
+
+	context.tokens[len(context.tokens)-1] = token.Token{
+		Type:  token.REPEAT,
+		Value: rep,
+	}
+}
+
+func parseRepeat(pattern string, context *ParseContext) {
+	switch pattern[context.pos] {
+	case '{':
+		parseRepeatBracket(pattern, context)
+	default:
+
+	}
 }

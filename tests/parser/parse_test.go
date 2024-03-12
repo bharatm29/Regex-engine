@@ -89,6 +89,61 @@ func TestParser(t *testing.T) {
 				}},
 			},
 		},
+
+		// Repeatition
+		/*
+			{
+				pattern: "a*",
+				tokens: []token.Token{
+					{Type: token.REPEAT, Value: struct {
+						repeatValue token.Token
+						min         int
+						max         int
+					}{
+						repeatValue: token.Token{Type: token.LITERAL, Value: 'a'},
+
+						min: 0,
+						max: -1,
+					}},
+				},
+			},
+		*/
+
+		{
+			pattern: "a{1,3}",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 1,
+					Max: 3,
+				}},
+			},
+		},
+		{
+			pattern: "a{,3}c",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: 3,
+				}},
+				{Type: token.LITERAL, Value: byte('c')},
+			},
+		},
+		{
+			pattern: "ba{1,}",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('b')},
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 1,
+					Max: parser.INFINITY,
+				}},
+			},
+		},
 	}
 
 	for _, test := range testcases {
