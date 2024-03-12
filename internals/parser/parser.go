@@ -48,6 +48,7 @@ func parsePattern(pattern string, context *ParseContext) {
 	case '[': // [abc]
 		parseBracket(pattern, context)
 	case '|': //[a-e]
+		parseOr(pattern, context)
 	case '{': // {3, } {3, 4} {,10}
 	case '*', '?', '+': // a*, a?, a+
 	default:
@@ -108,4 +109,32 @@ func parseBracket(pattern string, context *ParseContext) {
 		Type:  token.BRACKET,
 		Value: literalSet,
 	})
+}
+
+func parseOr(pattern string, context *ParseContext) {
+	context.pos++ // skipping |
+
+	rightContext := &ParseContext{
+		pos:    context.pos,
+		tokens: []token.Token{},
+	}
+
+	for rightContext.pos < len(pattern) && pattern[rightContext.pos] != ')' {
+		parsePattern(pattern, rightContext)
+		rightContext.pos++
+	}
+
+	left := token.Token{
+		Type:  token.OR,
+		Value: context.tokens,
+	}
+
+	right := token.Token{
+		Type:  token.OR,
+		Value: rightContext.tokens,
+	}
+
+	context.pos = rightContext.pos
+
+	context.tokens = []token.Token{left, right}
 }

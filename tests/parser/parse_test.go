@@ -13,6 +13,7 @@ func TestParser(t *testing.T) {
 		pattern string
 		tokens  []token.Token
 	}{
+		// literals
 		{
 			pattern: "a",
 			tokens: []token.Token{
@@ -20,6 +21,7 @@ func TestParser(t *testing.T) {
 			},
 		},
 
+		// bracket
 		{
 			pattern: "(abc)",
 			tokens: []token.Token{
@@ -56,6 +58,34 @@ func TestParser(t *testing.T) {
 					byte('a'): true,
 					byte('b'): true,
 					byte('c'): true,
+				}},
+			},
+		},
+
+		// Or
+		{
+			pattern: "a|b",
+			tokens: []token.Token{
+				{Type: token.OR, Value: []token.Token{
+					{Type: token.LITERAL, Value: byte('a')},
+				}},
+				{Type: token.OR, Value: []token.Token{
+					{Type: token.LITERAL, Value: byte('b')},
+				}},
+			},
+		},
+		{
+			pattern: "[ab-c]|z",
+			tokens: []token.Token{
+				{Type: token.OR, Value: []token.Token{
+					{Type: token.BRACKET, Value: map[byte]bool{
+						byte('a'): true,
+						byte('b'): true,
+						byte('c'): true,
+					}},
+				}},
+				{Type: token.OR, Value: []token.Token{
+					{Type: token.LITERAL, Value: byte('z')},
 				}},
 			},
 		},
