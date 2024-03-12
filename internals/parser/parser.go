@@ -152,6 +152,25 @@ type RepeatValue struct {
 
 const INFINITY = -1
 
+func parseRepeat(pattern string, context *ParseContext) {
+	switch pattern[context.pos] {
+	case '{':
+		parseRepeatBracket(pattern, context)
+	case '*':
+		makeRepeat(0, INFINITY, context)
+
+	case '+':
+		makeRepeat(1, INFINITY, context)
+
+	case '?':
+		makeRepeat(0, 1, context)
+
+	default:
+		fmt.Fprintf(os.Stderr, "Unreachable repeat character: %c", pattern[context.pos])
+		os.Exit(1)
+	}
+}
+
 func parseRepeatBracket(pattern string, context *ParseContext) {
 	context.pos++ // skip {
 	pos := context.pos
@@ -200,48 +219,15 @@ func parseRepeatBracket(pattern string, context *ParseContext) {
 	}
 }
 
-func parseRepeat(pattern string, context *ParseContext) {
-	switch pattern[context.pos] {
-	case '{':
-		parseRepeatBracket(pattern, context)
-	case '*':
-		rep := RepeatValue{}
-		rep.Min = 0
-		rep.Max = INFINITY
+func makeRepeat(min, max int, context *ParseContext) {
+	rep := RepeatValue{}
+	rep.Min = min
+	rep.Max = max
 
-		rep.RepeatToken = context.tokens[len(context.tokens)-1]
+	rep.RepeatToken = context.tokens[len(context.tokens)-1]
 
-		context.tokens[len(context.tokens)-1] = token.Token{
-			Type:  token.REPEAT,
-			Value: rep,
-		}
-
-	case '+':
-		rep := RepeatValue{}
-		rep.Min = 1
-		rep.Max = INFINITY
-
-		rep.RepeatToken = context.tokens[len(context.tokens)-1]
-
-		context.tokens[len(context.tokens)-1] = token.Token{
-			Type:  token.REPEAT,
-			Value: rep,
-		}
-
-	case '?':
-		rep := RepeatValue{}
-		rep.Min = 0
-		rep.Max = 1
-
-		rep.RepeatToken = context.tokens[len(context.tokens)-1]
-
-		context.tokens[len(context.tokens)-1] = token.Token{
-			Type:  token.REPEAT,
-			Value: rep,
-		}
-
-	default:
-		fmt.Fprintf(os.Stderr, "Unreachable repeat character: %c", pattern[context.pos])
-		os.Exit(1)
+	context.tokens[len(context.tokens)-1] = token.Token {
+		Type:  token.REPEAT,
+		Value: rep,
 	}
 }

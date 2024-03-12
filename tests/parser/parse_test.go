@@ -90,25 +90,6 @@ func TestParser(t *testing.T) {
 			},
 		},
 
-		// Repeatition
-		/*
-			{
-				pattern: "a*",
-				tokens: []token.Token{
-					{Type: token.REPEAT, Value: struct {
-						repeatValue token.Token
-						min         int
-						max         int
-					}{
-						repeatValue: token.Token{Type: token.LITERAL, Value: 'a'},
-
-						min: 0,
-						max: -1,
-					}},
-				},
-			},
-		*/
-
 		// Bracket repeat
 		{
 			pattern: "a{1,3}",
