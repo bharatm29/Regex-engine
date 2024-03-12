@@ -109,6 +109,7 @@ func TestParser(t *testing.T) {
 			},
 		*/
 
+		// Bracket repeat
 		{
 			pattern: "a{1,3}",
 			tokens: []token.Token{
@@ -142,6 +143,117 @@ func TestParser(t *testing.T) {
 					Min: 1,
 					Max: parser.INFINITY,
 				}},
+			},
+		},
+
+		// *
+		{
+			pattern: "a*",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: parser.INFINITY,
+				}},
+			},
+		},
+		{
+			pattern: "ba*",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('b')},
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: parser.INFINITY,
+				}},
+			},
+		},
+		{
+			pattern: "a*c",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: parser.INFINITY,
+				}},
+				{Type: token.LITERAL, Value: byte('c')},
+			},
+		},
+
+		// +
+		{
+			pattern: "a+",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 1,
+					Max: parser.INFINITY,
+				}},
+			},
+		},
+		{
+			pattern: "ba+",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('b')},
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 1,
+					Max: parser.INFINITY,
+				}},
+			},
+		},
+		{
+			pattern: "a+c",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 1,
+					Max: parser.INFINITY,
+				}},
+				{Type: token.LITERAL, Value: byte('c')},
+			},
+		},
+
+		// ?
+		{
+			pattern: "a?",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: 1,
+				}},
+			},
+		},
+		{
+			pattern: "ba?",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('b')},
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: 1,
+				}},
+			},
+		},
+		{
+			pattern: "a?c",
+			tokens: []token.Token{
+				{Type: token.REPEAT, Value: parser.RepeatValue{
+					RepeatToken: token.Token{Type: token.LITERAL, Value: byte('a')},
+
+					Min: 0,
+					Max: 1,
+				}},
+				{Type: token.LITERAL, Value: byte('c')},
 			},
 		},
 	}

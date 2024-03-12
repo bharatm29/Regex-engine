@@ -174,6 +174,7 @@ func parseRepeatBracket(pattern string, context *ParseContext) {
 		val, err := strconv.Atoi(split[0])
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Could not convert %s to int", split[0])
+			os.Exit(1)
 		}
 
 		rep.Min = val
@@ -185,6 +186,7 @@ func parseRepeatBracket(pattern string, context *ParseContext) {
 		val, err := strconv.Atoi(split[len(split)-1])
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Could not convert %s to int", split[len(split)-1])
+			os.Exit(1)
 		}
 
 		rep.Max = val
@@ -202,7 +204,44 @@ func parseRepeat(pattern string, context *ParseContext) {
 	switch pattern[context.pos] {
 	case '{':
 		parseRepeatBracket(pattern, context)
-	default:
+	case '*':
+		rep := RepeatValue{}
+		rep.Min = 0
+		rep.Max = INFINITY
 
+		rep.RepeatToken = context.tokens[len(context.tokens)-1]
+
+		context.tokens[len(context.tokens)-1] = token.Token{
+			Type:  token.REPEAT,
+			Value: rep,
+		}
+
+	case '+':
+		rep := RepeatValue{}
+		rep.Min = 1
+		rep.Max = INFINITY
+
+		rep.RepeatToken = context.tokens[len(context.tokens)-1]
+
+		context.tokens[len(context.tokens)-1] = token.Token{
+			Type:  token.REPEAT,
+			Value: rep,
+		}
+
+	case '?':
+		rep := RepeatValue{}
+		rep.Min = 0
+		rep.Max = 1
+
+		rep.RepeatToken = context.tokens[len(context.tokens)-1]
+
+		context.tokens[len(context.tokens)-1] = token.Token{
+			Type:  token.REPEAT,
+			Value: rep,
+		}
+
+	default:
+		fmt.Fprintf(os.Stderr, "Unreachable repeat character: %c", pattern[context.pos])
+		os.Exit(1)
 	}
 }
