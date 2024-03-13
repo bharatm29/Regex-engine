@@ -79,8 +79,6 @@ func parseGroup(pattern string, groupContext *ParseContext) {
 		fmt.Fprintf(os.Stderr, "[ERROR] Unclosed group bracket: %s", pattern)
 		os.Exit(1)
 	}
-
-	groupContext.pos++
 }
 
 func parseBracket(pattern string, context *ParseContext) {

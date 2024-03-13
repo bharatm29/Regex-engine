@@ -78,6 +78,7 @@ func TestRegex(t *testing.T) {
 			match:   true,
 		},
 
+        // bracket
 		{
 			pattern: "[abc]",
 			input:   "a",
@@ -96,6 +97,74 @@ func TestRegex(t *testing.T) {
 		{
 			pattern: "[ab-c]|z",
 			input:   "x",
+			match:   false,
+		},
+
+        // *
+		{
+			pattern: "a*",
+			input:   "aaaaaaaaaaaaaaaaaaaaa",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)*",
+			input:   "ccccccccccccccccccccccccccc",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)*ab*c",
+			input:   "zzzzzzzzzzzzzzzzzac",
+			match:   true,
+		},
+
+        // +
+		{
+			pattern: "a+",
+			input:   "aaaaaaaaaaaaaaaaaaaaa",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)+",
+			input:   "ccccccccccccccccccccccccccc",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)*ab+c",
+			input:   "zzzzzzzzzzzzzzzzzac",
+			match:   false,
+		},
+
+        // ?
+		{
+			pattern: "a?",
+			input:   "",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)+",
+			input:   "z",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)*ab?c",
+			input:   "zzzzzzzzzzzzzzzzzabbc",
+			match:   false,
+		},
+
+        // {
+		{
+			pattern: "a{,3}",
+			input:   "aaaa",
+			match:   false,
+		},
+		{
+			pattern: "([ab-c]|z){1,2}",
+			input:   "zz",
+			match:   true,
+		},
+		{
+			pattern: "([ab-c]|z)*ab{0,1}c",
+			input:   "zzzzzzzzzzzzzzzzzabbc",
 			match:   false,
 		},
 	}

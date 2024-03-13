@@ -122,12 +122,54 @@ func toNfaToken(tok token.Token) (start, end *state) {
 		leftEnd.transition[epsilonChar] = append(leftEnd.transition[epsilonChar], endState)
 		rightEnd.transition[epsilonChar] = append(rightEnd.transition[epsilonChar], endState)
 
-    case token.BRACKET:
-        literals := tok.Value.(map[byte]bool)
+	case token.BRACKET:
+		literals := tok.Value.(map[byte]bool)
 
-        for l := range literals {
-            startState.transition[l] = append(startState.transition[l], endState)
-        }
+		for l := range literals {
+			startState.transition[l] = append(startState.transition[l], endState)
+		}
+
+	case token.REPEAT:
+		repeat := tok.Value.(parser.RepeatValue)
+
+		if repeat.Min == 0 {
+			startState.transition[epsilonChar] = append(startState.transition[epsilonChar], endState)
+		}
+
+		start, end := toNfaToken(repeat.RepeatToken)
+
+		startState.transition[epsilonChar] = append(startState.transition[epsilonChar], start)
+
+		var copyCount int
+
+		if repeat.Max == parser.INFINITY {
+			if repeat.Min == 0 {
+				copyCount = 1
+			} else {
+				copyCount = repeat.Min
+			}
+		} else {
+			copyCount = repeat.Max
+		}
+
+		for i := 2; i <= copyCount; i++ {
+			s, e := toNfaToken(repeat.RepeatToken)
+
+			end.transition[epsilonChar] = append(end.transition[epsilonChar], s)
+
+			if i > repeat.Min {
+				s.transition[epsilonChar] = append(s.transition[epsilonChar], endState)
+			}
+
+			start = s
+            end = e
+		}
+
+		end.transition[epsilonChar] = append(end.transition[epsilonChar], endState)
+
+		if repeat.Max == parser.INFINITY {
+			endState.transition[epsilonChar] = append(endState.transition[epsilonChar], start)
+		}
 
 	default:
 		os.Exit(1)
