@@ -92,6 +92,7 @@ func toNfaToken(tok token.Token) (start, end *state) {
 	case token.LITERAL:
 		ch := tok.Value.(byte)
 		startState.transition[ch] = append(startState.transition[ch], endState)
+    case token.GROUP:
 	default:
 		os.Exit(1)
 	}

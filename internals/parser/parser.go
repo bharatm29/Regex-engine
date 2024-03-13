@@ -44,7 +44,10 @@ func parsePattern(pattern string, context *ParseContext) {
 
 		parseGroup(pattern, groupContext)
 
-		context.tokens = append(context.tokens, groupContext.tokens...)
+		context.tokens = append(context.tokens, token.Token{
+			Type:  token.GROUP,
+			Value: groupContext.tokens,
+		})
 		context.pos = groupContext.pos
 
 	case '[': // [abc]
@@ -226,7 +229,7 @@ func makeRepeat(min, max int, context *ParseContext) {
 
 	rep.RepeatToken = context.tokens[len(context.tokens)-1]
 
-	context.tokens[len(context.tokens)-1] = token.Token {
+	context.tokens[len(context.tokens)-1] = token.Token{
 		Type:  token.REPEAT,
 		Value: rep,
 	}
