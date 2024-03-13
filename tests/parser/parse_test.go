@@ -96,27 +96,80 @@ func TestParser(t *testing.T) {
 		{
 			pattern: "a|b",
 			tokens: []token.Token{
-				{Type: token.OR, Value: []token.Token{
-					{Type: token.LITERAL, Value: byte('a')},
-				}},
-				{Type: token.OR, Value: []token.Token{
-					{Type: token.LITERAL, Value: byte('b')},
-				}},
+				{
+					Type: token.OR,
+					Value: []token.Token{
+						{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+							{Type: token.LITERAL, Value: byte('a')},
+						}},
+						{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+							{Type: token.LITERAL, Value: byte('b')},
+						}},
+					},
+				},
+			},
+		},
+		{
+			pattern: "(a|b)",
+			tokens: []token.Token{
+				{
+					Type: token.GROUP,
+					Value: []token.Token{
+						{
+							Type: token.OR,
+							Value: []token.Token{
+								{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+									{Type: token.LITERAL, Value: byte('a')},
+								}},
+								{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+									{Type: token.LITERAL, Value: byte('b')},
+								}},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			pattern: "c(a|b)",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('c')},
+				{
+					Type: token.GROUP,
+					Value: []token.Token{
+						{
+							Type: token.OR,
+							Value: []token.Token{
+								{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+									{Type: token.LITERAL, Value: byte('a')},
+								}},
+								{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+									{Type: token.LITERAL, Value: byte('b')},
+								}},
+							},
+						},
+					},
+				},
 			},
 		},
 		{
 			pattern: "[ab-c]|z",
 			tokens: []token.Token{
-				{Type: token.OR, Value: []token.Token{
-					{Type: token.BRACKET, Value: map[byte]bool{
-						byte('a'): true,
-						byte('b'): true,
-						byte('c'): true,
-					}},
-				}},
-				{Type: token.OR, Value: []token.Token{
-					{Type: token.LITERAL, Value: byte('z')},
-				}},
+				{
+					Type: token.OR,
+					Value: []token.Token{
+						{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+							{Type: token.BRACKET, Value: map[byte]bool{
+								byte('a'): true,
+								byte('b'): true,
+								byte('c'): true,
+							}},
+						}},
+						{Type: token.UNCAPTURE_GROUP, Value: []token.Token{
+							{Type: token.LITERAL, Value: byte('z')},
+						}},
+					},
+				},
 			},
 		},
 

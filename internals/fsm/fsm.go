@@ -93,7 +93,7 @@ func toNfaToken(tok token.Token) (start, end *state) {
 		ch := tok.Value.(byte)
 		startState.transition[ch] = append(startState.transition[ch], endState)
 
-	case token.GROUP:
+	case token.GROUP, token.UNCAPTURE_GROUP:
 		toks := tok.Value.([]token.Token)
 
 		if len(toks) == 0 {
@@ -107,6 +107,20 @@ func toNfaToken(tok token.Token) (start, end *state) {
 			startState.transition[epsilonChar] = append(startState.transition[epsilonChar], s)
 			e.transition[epsilonChar] = append(e.transition[epsilonChar], endState)
 		}
+
+	case token.OR:
+		tokens := tok.Value.([]token.Token)
+
+		leftTok := tokens[0]
+		rightTok := tokens[1]
+
+		leftStart, leftEnd := toNfaToken(leftTok)
+		rightStart, rightEnd := toNfaToken(rightTok)
+
+		startState.transition[epsilonChar] = append(startState.transition[epsilonChar], leftStart, rightStart)
+
+		leftEnd.transition[epsilonChar] = append(leftEnd.transition[epsilonChar], endState)
+		rightEnd.transition[epsilonChar] = append(rightEnd.transition[epsilonChar], endState)
 
 	default:
 		os.Exit(1)

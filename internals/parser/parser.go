@@ -131,19 +131,27 @@ func parseOr(pattern string, context *ParseContext) {
 		rightContext.pos++
 	}
 
+	// Decrementing pos by one since the bracket condition will be checked in outer parseGroup,
+	// otherwise it will throw error
+	if rightContext.pos < len(pattern) && pattern[rightContext.pos] == ')' {
+		rightContext.pos--
+	}
+
 	left := token.Token{
-		Type:  token.OR,
+		Type:  token.UNCAPTURE_GROUP,
 		Value: context.tokens,
 	}
 
 	right := token.Token{
-		Type:  token.OR,
+		Type:  token.UNCAPTURE_GROUP,
 		Value: rightContext.tokens,
 	}
 
 	context.pos = rightContext.pos
 
-	context.tokens = []token.Token{left, right}
+	context.tokens = []token.Token{
+		{Type: token.OR, Value: []token.Token{left, right}},
+	}
 }
 
 type RepeatValue struct {

@@ -12,6 +12,7 @@ func TestRegex(t *testing.T) {
 		input   string
 		match   bool
 	}{
+		// literals
 		{
 			pattern: "",
 			input:   "",
@@ -33,6 +34,7 @@ func TestRegex(t *testing.T) {
 			match:   false,
 		},
 
+		// group expressions
 		{
 			pattern: "(abc)",
 			input:   "a",
@@ -52,6 +54,28 @@ func TestRegex(t *testing.T) {
 			pattern: "a(cd)",
 			input:   "cd",
 			match:   false,
+		},
+
+		// or expressions
+		{
+			pattern: "a|b",
+			input:   "a",
+			match:   true,
+		},
+		{
+			pattern: "(a|b)",
+			input:   "a",
+			match:   true,
+		},
+		{
+			pattern: "c(a|b)",
+			input:   "cb",
+			match:   true,
+		},
+		{
+			pattern: "a|(bcd)",
+			input:   "d",
+			match:   true,
 		},
 	}
 
