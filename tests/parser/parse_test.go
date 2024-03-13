@@ -36,19 +36,30 @@ func TestParser(t *testing.T) {
 			},
 		},
 
-		//FIXME: Not working
-		/*
-			{
-				pattern: "a()",
-				tokens: []token.Token{
-					{
-						Type: token.GROUP,
-						Value: []token.Token{
-						},
+		{
+			pattern: "a()",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('a')},
+				{
+					Type:  token.GROUP,
+					Value: []token.Token{},
+				},
+			},
+		},
+
+		{
+			pattern: "a(bc)",
+			tokens: []token.Token{
+				{Type: token.LITERAL, Value: byte('a')},
+				{
+					Type: token.GROUP,
+					Value: []token.Token{
+						{Type: token.LITERAL, Value: byte('b')},
+						{Type: token.LITERAL, Value: byte('c')},
 					},
 				},
 			},
-		*/
+		},
 
 		{
 			pattern: "[abc]",

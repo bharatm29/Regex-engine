@@ -59,10 +59,10 @@ func ToNfa(ctx *parser.ParseContext) (*state, *state) {
 
 	tokens := ctx.GetTokens()
 
-    if len(tokens) == 0 {
-        startState.transition[epsilonChar] = append(startState.transition[epsilonChar], endState)
-        return startState, endState
-    }
+	if len(tokens) == 0 {
+		startState.transition[epsilonChar] = append(startState.transition[epsilonChar], endState)
+		return startState, endState
+	}
 
 	start, end := toNfaToken(tokens[0])
 
@@ -92,7 +92,22 @@ func toNfaToken(tok token.Token) (start, end *state) {
 	case token.LITERAL:
 		ch := tok.Value.(byte)
 		startState.transition[ch] = append(startState.transition[ch], endState)
-    case token.GROUP:
+
+	case token.GROUP:
+		toks := tok.Value.([]token.Token)
+
+		if len(toks) == 0 {
+			startState.transition[epsilonChar] = append(startState.transition[epsilonChar], endState)
+			return startState, endState
+		}
+
+		for i := 0; i < len(toks); i++ {
+			s, e := toNfaToken(toks[i])
+
+			startState.transition[epsilonChar] = append(startState.transition[epsilonChar], s)
+			e.transition[epsilonChar] = append(e.transition[epsilonChar], endState)
+		}
+
 	default:
 		os.Exit(1)
 	}

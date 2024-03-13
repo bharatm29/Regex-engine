@@ -13,6 +13,11 @@ func TestRegex(t *testing.T) {
 		match   bool
 	}{
 		{
+			pattern: "",
+			input:   "",
+			match:   true,
+		},
+		{
 			pattern: "a",
 			input:   "a",
 			match:   true,
@@ -27,6 +32,27 @@ func TestRegex(t *testing.T) {
 			input:   "",
 			match:   false,
 		},
+
+		{
+			pattern: "(abc)",
+			input:   "a",
+			match:   true,
+		},
+		{
+			pattern: "(abc)",
+			input:   "da",
+			match:   false,
+		},
+		{
+			pattern: "a(cd)",
+			input:   "ac",
+			match:   true,
+		},
+		{
+			pattern: "a(cd)",
+			input:   "cd",
+			match:   false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -34,7 +60,7 @@ func TestRegex(t *testing.T) {
 			actual := regex.Match(tt.input, tt.pattern)
 
 			if actual != tt.match {
-                t.Logf("Expected %t, got %t: [%s] on [%s]", tt.match, actual, tt.pattern, tt.input)
+				t.Logf("Expected %t, got %t: [%s] on [%s]", tt.match, actual, tt.pattern, tt.input)
 				t.Fail()
 			}
 		})

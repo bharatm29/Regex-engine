@@ -38,7 +38,7 @@ func parsePattern(pattern string, context *ParseContext) {
 	switch curChar {
 	case '(': // (abc)
 		groupContext := &ParseContext{
-			pos:    0,
+			pos:    context.pos,
 			tokens: []token.Token{},
 		}
 
