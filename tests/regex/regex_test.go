@@ -17,6 +17,16 @@ func TestRegex(t *testing.T) {
 			input:   "a",
 			match:   true,
 		},
+		{
+			pattern: "",
+			input:   "a",
+			match:   false,
+		},
+		{
+			pattern: "a",
+			input:   "",
+			match:   false,
+		},
 	}
 
 	for _, tt := range tests {
