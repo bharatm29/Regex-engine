@@ -122,6 +122,13 @@ func toNfaToken(tok token.Token) (start, end *state) {
 		leftEnd.transition[epsilonChar] = append(leftEnd.transition[epsilonChar], endState)
 		rightEnd.transition[epsilonChar] = append(rightEnd.transition[epsilonChar], endState)
 
+    case token.BRACKET:
+        literals := tok.Value.(map[byte]bool)
+
+        for l := range literals {
+            startState.transition[l] = append(startState.transition[l], endState)
+        }
+
 	default:
 		os.Exit(1)
 	}

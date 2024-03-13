@@ -77,6 +77,27 @@ func TestRegex(t *testing.T) {
 			input:   "d",
 			match:   true,
 		},
+
+		{
+			pattern: "[abc]",
+			input:   "a",
+			match:   true,
+		},
+		{
+			pattern: "[ac-d]",
+			input:   "da",
+			match:   false,
+		},
+		{
+			pattern: "[ab-c]|z",
+			input:   "z",
+			match:   true,
+		},
+		{
+			pattern: "[ab-c]|z",
+			input:   "x",
+			match:   false,
+		},
 	}
 
 	for _, tt := range tests {
