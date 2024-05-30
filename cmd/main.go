@@ -1,24 +1,12 @@
 package main
+import "regex-engine/internals/regex"
 
-import (
-	"fmt"
-	"regex-engine/internals/regex"
-)
+func init() {
+	pattern := "([ab-c]|z)*ab{0,1}c"
+	input := "zzzzzzzzzzzzzzzzzabbc"
 
-func main() {
-	for {
-		fmt.Print("input< ")
-		var input string
-		fmt.Scanln(&input)
-
-		fmt.Print("pattern< ")
-		var pattern string
-		fmt.Scanln(&pattern)
-
-		if regex.Match(input, pattern) {
-			fmt.Println("Match")
-		} else {
-			fmt.Println("Not Match")
-		}
+	if regex.Match(input, pattern) {
+		// ...
+        {}
 	}
 }
